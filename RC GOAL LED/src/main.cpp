@@ -2,10 +2,14 @@
 #include <Wire.h>
 #include <hd44780.h>
 #include <hd44780ioClass/hd44780_I2Cexp.h>
+#include <FastLED.h>
+
+#define NUM_LEDS 144
+#define DATA_PIN 7
 
 //These define's must be placed at the beginning before #include "TimerInterrupt.h"
-#define TIMER_INTERRUPT_DEBUG 0
-
+//#define TIMER_INTERRUPT_DEBUG 0
+//
 #define USE_TIMER_1 true
 #define USE_TIMER_2 true
 #define USE_TIMER_3 false
@@ -16,6 +20,9 @@
 #include "TimerInterrupt.h"
 
 //LiquidCrystal_I2C lcd(0x3F, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
+
+CRGB leds[NUM_LEDS];
+
 
 hd44780_I2Cexp lcd;
 String serial_in;
@@ -33,31 +40,46 @@ int lcd_row_1_pos, lcd_row_2_pos;
 void TimerHandler1()
 {
   Serial.println("Timer triggered");
-  lcd_row_1_pos = (lcd_row_1_pos + 1) % 32;
 }
 
 void setup()
 {
+  
+  FastLED.addLeds<WS2811, DATA_PIN>(leds, NUM_LEDS);
+  
   // put your setup code here, to run once:
   Serial.begin(115200);
   Serial.print("Started....\n");
 
-  //ITimer1.init();
+  //ITimer2.init();
   //
   //// Interval in unsigned long millisecs
-  //if (ITimer1.attachInterruptInterval(TIMER1_INTERVAL_MS, TimerHandler1))
+  //if (ITimer2.attachInterruptInterval(TIMER1_INTERVAL_MS, TimerHandler1))
   //  Serial.println("Starting  ITimer1 OK, millis() = " + String(millis()));
   //else
   //  Serial.println("Can't set ITimer1. Select another freq. or timer");
 
-  lcd.init(); // initialize the lcd
-  lcd.backlight();
-  lcd.setCursor(1, 0);
-  lcd.print("Hello, world!");
+ // lcd.init(); // initialize the lcd
+ // lcd.backlight();
+ // lcd.setCursor(1, 0);
+ // lcd.print("Hello, world!");
+  
+  FastLED.clear();
 }
 
 void loop()
 {
+
+  leds[90] = CRGB::Blue; 
+
+  leds[91] = CRGB::Yellow;
+
+  leds[92] = CRGB::Blue;
+  
+  leds[93] = CRGB::Green; 
+
+  FastLED.show(); 
+
   // put your main code here, to run repeatedly:
   if (true)
   {
@@ -125,8 +147,8 @@ void loop()
         {
           Serial.println("Best lap ever so far");
           best_ever_lap = lap;
-          lcd.setCursor(0, 1);
-          lcd.print("Best: " + String(best_ever_lap) + " -  " + String(nick));
+          //lcd.setCursor(0, 1);
+          //lcd.print("Best: " + String(best_ever_lap) + " -  " + String(nick));
         }
 
         if ((drivers_best[racer_number] == 0) | (drivers_best[racer_number] > lap))
@@ -139,8 +161,8 @@ void loop()
         {
           drivers_last[racer_number] = lap;
           String str = String(nick) + ": " + String(lap) + "(" + String(drivers_best[racer_number]) + ")";
-          lcd.setCursor(0, 0);
-          lcd.print(str.substring(0, 16));
+          //lcd.setCursor(0, 0);
+          //lcd.print(str.substring(0, 16));
         }
 
         if (racer_number > number_of_racers)
@@ -152,11 +174,11 @@ void loop()
       }
       else
       {
-        char lcd_row_2[20];
-        lcd.setCursor(0, 0);
-        lcd.print(serial_in.substring(0, 16));
-        lcd.setCursor(0, 1);
-        lcd.print(serial_in.substring(16, 32) + "                         ");
+        //char lcd_row_2[20];
+        //lcd.setCursor(0, 0);
+        //lcd.print(serial_in.substring(0, 16));
+        //lcd.setCursor(0, 1);
+        //lcd.print(serial_in.substring(16, 32) + "                         ");
       }
     }
   }
