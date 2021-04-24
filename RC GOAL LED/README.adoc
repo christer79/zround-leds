@@ -1,0 +1,1 @@
+echo "\$LAP 1 2 3 Apapa 8,64#" > /dev/ttyACM0
